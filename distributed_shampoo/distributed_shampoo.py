@@ -414,9 +414,7 @@ class DistributedShampoo(torch.optim.Optimizer):
 
     @torch.no_grad()
     def _instantiate_distributor(self) -> None:
-        for state_lists, group in zip(
-            self._per_group_state_lists, self.param_groups, strict=True
-        ):
+        for state_lists, group in zip(self._per_group_state_lists, self.param_groups, strict=True):
             # Instantiate distributors for each group.
             if self._distributed_config is None:
                 state_lists[DISTRIBUTOR] = Distributor(
@@ -444,9 +442,7 @@ class DistributedShampoo(torch.optim.Optimizer):
 
     @torch.no_grad()
     def _instantiate_shampoo_preconditioner_list(self) -> None:
-        for state_lists, group in zip(
-            self._per_group_state_lists, self.param_groups, strict=True
-        ):
+        for state_lists, group in zip(self._per_group_state_lists, self.param_groups, strict=True):
             state_lists[SHAMPOO_PRECONDITIONER_LIST] = ShampooPreconditionerList(
                 block_list=state_lists[DISTRIBUTOR].global_blocked_params,
                 state=self.state,
@@ -463,9 +459,7 @@ class DistributedShampoo(torch.optim.Optimizer):
 
     @torch.no_grad()
     def _instantiate_grafting(self) -> None:
-        for state_lists, group in zip(
-            self._per_group_state_lists, self.param_groups, strict=True
-        ):
+        for state_lists, group in zip(self._per_group_state_lists, self.param_groups, strict=True):
             if group[GRAFTING_CONFIG] is None:
                 state_lists[GRAFTING_PRECONDITIONER_LIST] = None
             elif isinstance(group[GRAFTING_CONFIG], SGDGraftingConfig):
@@ -513,19 +507,13 @@ class DistributedShampoo(torch.optim.Optimizer):
 
     @torch.no_grad()
     def _instantiate_momentum(self) -> None:
-        for state_lists, group in zip(
-            self._per_group_state_lists, self.param_groups, strict=True
-        ):
+        for state_lists, group in zip(self._per_group_state_lists, self.param_groups, strict=True):
             if group[MOMENTUM] == 0.0:
                 continue
 
             # Construct global momentum list.
             global_momentum_list = []
-            for block, block_info in zip(
-                state_lists[DISTRIBUTOR].global_blocked_params,
-                state_lists[DISTRIBUTOR].global_block_info_list,
-                strict=True,
-            ):
+            for block, block_info in zip(state_lists[DISTRIBUTOR].global_blocked_params, state_lists[DISTRIBUTOR].global_block_info_list, strict=True):
                 assert (
                     block_index := block_info.composable_block_ids[1]
                 ) in self.state[
@@ -556,19 +544,13 @@ class DistributedShampoo(torch.optim.Optimizer):
 
     @torch.no_grad()
     def _instantiate_filtered_grads(self) -> None:
-        for state_lists, group in zip(
-            self._per_group_state_lists, self.param_groups, strict=True
-        ):
+        for state_lists, group in zip(self._per_group_state_lists, self.param_groups, strict=True):
             if group[BETAS][0] == 0.0:
                 continue
 
             # Construct global filtered gradient list.
             global_filtered_grad_list = []
-            for block, block_info in zip(
-                state_lists[DISTRIBUTOR].global_blocked_params,
-                state_lists[DISTRIBUTOR].global_block_info_list,
-                strict=True,
-            ):
+            for block, block_info in zip(state_lists[DISTRIBUTOR].global_blocked_params,state_lists[DISTRIBUTOR].global_block_info_list,strict=True):
                 assert (
                     block_index := block_info.composable_block_ids[1]
                 ) in self.state[
@@ -650,9 +632,7 @@ class DistributedShampoo(torch.optim.Optimizer):
         relative_errors = []
         relative_residuals = []
 
-        for (group_index, group), state_lists in zip(
-            enumerate(self.param_groups), self._per_group_state_lists, strict=True
-        ):
+        for (group_index, group), state_lists in zip(enumerate(self.param_groups), self._per_group_state_lists, strict=True):
 
             # Get expected relative errors/residuals for debugging purposes
             if group[PRECONDITIONER_DTYPE] == torch.float64:
@@ -840,9 +820,7 @@ class DistributedShampoo(torch.optim.Optimizer):
             with torch.enable_grad():
                 loss = closure()
 
-        for state_lists, group in zip(
-            self._per_group_state_lists, self.param_groups, strict=True
-        ):
+        for state_lists, group in zip(self._per_group_state_lists, self.param_groups, strict=True):
             # Construct blocked gradient list.
             state_lists[MASKED_BLOCKED_GRADS] = state_lists[
                 DISTRIBUTOR
