@@ -99,7 +99,7 @@ class FSDPDistributor(DistributorInterface):
             for ((param_index, param), num_blocks_within_param) in zip(
                 enumerate(self._param_group[PARAMS]),
                 self._global_num_blocks_per_param,
-                strict=True,
+                
             )
             for block_index in range(num_blocks_within_param)
         )
@@ -200,7 +200,7 @@ class FSDPDistributor(DistributorInterface):
             self._global_num_blocks_per_param,
             generate_pairwise_indices(self._global_num_blocks_per_param),
             generate_pairwise_indices(self._global_num_splits_per_param),
-            strict=True,
+            
         ):
             flattened_grad = flattened_param.grad
             param_distributor_selector = self._distributor_selector[
@@ -238,7 +238,7 @@ class FSDPDistributor(DistributorInterface):
                 split_grads,
                 merged_dims_within_flattened_param,
                 generate_pairwise_indices(num_blocks_within_split_grads),
-                strict=True,
+                
             ):
                 # Obtain blocks for each split gradient after merging.
                 blocks_within_grad = multi_dim_split(
