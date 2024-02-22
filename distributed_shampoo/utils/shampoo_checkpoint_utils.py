@@ -21,6 +21,10 @@ from optimizer_modules import OptimizerModule
 logger: logging.Logger = logging.getLogger(__name__)
 
 
+def dict_or(dict1, dict2):
+    return {**dict1, **dict2}
+
+
 def flatten(input_dict: Dict[str, Any]) -> Dict[str, Any]:
     """Recursive flattening function for checkpointing support.
 
@@ -72,7 +76,7 @@ def flatten(input_dict: Dict[str, Any]) -> Dict[str, Any]:
             )
 
         return reduce(
-            or_,
+            dict_or,
             (
                 parse_key_value(key=child_key, value=child_value)
                 for child_key, child_value in input_dict.items()
